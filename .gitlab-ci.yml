@@ -18,7 +18,7 @@ ecr_build:
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
-    - echo '{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"$ECR_REGISTRY\":\"ecr-login\"}}' > /kaniko/.docker/config.json
+    - echo '{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}' > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
