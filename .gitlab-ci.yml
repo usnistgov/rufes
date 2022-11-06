@@ -1,4 +1,4 @@
-build:
+local_build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -8,13 +8,21 @@ build:
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
       --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
       --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+ecr_build:
+  stage: build 
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
     - mkdir -p /kaniko/.docker
-    - echo "{"credHelpers":{"$ECR_REGISTRY":"ecr-login"}}" > /kaniko/.docker/config.json
+    - echo '{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"$ECR_REGISTRY\":\"ecr-login\"}}' > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
       --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
       --destination "${ECR_IMAGE_REF}:${CI_COMMIT_SHORT_SHA}"
       --destination "${ECR_IMAGE_REF}:${CI_COMMIT_BRANCH}"
   rules:
