@@ -13,12 +13,14 @@ local_build:
 
 ecr_build:
   stage: build 
+  variables: 
+    cred: "{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
-    - cred="{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    # - cred={\"credsStore\":\"ecr-login\",\"credHelpers\":{\"\":\"ecr-login\"}}
     - echo $cred > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
     - /kaniko/executor
