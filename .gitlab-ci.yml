@@ -14,7 +14,7 @@ local_build:
 ecr_build:
   stage: build 
   variables: 
-    cred: "{\"credsStore\":\"ecr-login\",\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
