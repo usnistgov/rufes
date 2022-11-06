@@ -20,6 +20,8 @@ ecr_build:
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
+    - aws ecr get-login-password --region us-east-1 
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
     # - cred={\"credsStore\":\"ecr-login\",\"credHelpers\":{\"\":\"ecr-login\"}}
     - echo $cred > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
