@@ -7,7 +7,8 @@ local_build:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
       --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
-      --destination "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}"
+      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}:${CI_COMMIT_SHORT_SHA}"
+      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}:latest"
   rules:
     - if: $CI_COMMIT_BRANCH
 
@@ -29,7 +30,7 @@ ecr_build:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
       --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
-      --destination "${ECR_IMAGE_REF}:${CI_COMMIT_SHORT_SHA}"
       --destination "${ECR_IMAGE_REF}:${CI_COMMIT_BRANCH}"
+      --insecure
   rules:
     - if: $CI_COMMIT_BRANCH
