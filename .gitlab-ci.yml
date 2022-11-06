@@ -14,14 +14,15 @@ local_build:
 ecr_build:
   stage: build 
   variables: 
-    cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    # cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    cred: "{\"credsStore\": \"ecr-login\"}"
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
-    - aws ecr get-login-password --region us-east-1 
-    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
+    # - aws ecr get-login-password --region us-east-1 
+    # - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
     # - cred={\"credsStore\":\"ecr-login\",\"credHelpers\":{\"\":\"ecr-login\"}}
     - echo $cred > /kaniko/.docker/config.json
     - cat /kaniko/.docker/config.json
