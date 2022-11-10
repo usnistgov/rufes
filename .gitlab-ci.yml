@@ -1,0 +1,36 @@
+local_build:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
+      --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}:${CI_COMMIT_SHORT_SHA}"
+      --destination "${CI_REGISTRY_IMAGE}/${CI_COMMIT_BRANCH}:latest"
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+ecr_build:
+  stage: build 
+  variables: 
+    # cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    cred: "{\"credsStore\": \"ecr-login\"}"
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    # - aws ecr get-login-password --region us-east-1 
+    # - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
+    # - cred={\"credsStore\":\"ecr-login\",\"credHelpers\":{\"\":\"ecr-login\"}}
+    - echo $cred > /kaniko/.docker/config.json
+    - cat /kaniko/.docker/config.json
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
+      --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
+      --destination "${ECR_IMAGE_REF}:${CI_COMMIT_BRANCH}"
+      --insecure
+  rules:
+    - when: never
