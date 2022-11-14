@@ -19,12 +19,16 @@ ecr_build:
     # cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
     cred: "{\"credsStore\": \"ecr-login\", \"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
     AWS_SDK_LOAD_CONFIG: "true"
+    # CI_COMMIT_BRANCH_SLUG: ""
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - export
     - mkdir -p /kaniko/.docker
+    - CI_COMMIT_BRANCH_SLUG=`echo ${CI_COMMIT_BRANCH} | sed -E -e 's/[^[:alnum:]]+/-/g' -e 's/^-+|-+$//g' | tr '[:upper:]' '[:lower:]'`
+    - ECR_DEST="${ECR_IMAGE_REF}:$CI_COMMIT_BRANCH_SLUG"
+    - echo "Attempting to build and push to $ECR_DEST"
     # - cat /kaniko/.docker/config.json
     # - aws ecr get-login-password --region us-east-1 
     # - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
