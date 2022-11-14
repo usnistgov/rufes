@@ -14,14 +14,18 @@ local_build:
 
 ecr_build:
   stage: build 
+    
   variables: 
     # cred: "{\"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
-    cred: "{\"credsStore\": \"ecr-login\"}"
+    cred: "{\"credsStore\": \"ecr-login\", \"credHelpers\":{\"${ECR_REGISTRY}\":\"ecr-login\"}}"
+    AWS_SDK_LOAD_CONFIG: "true"
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
+    - export
     - mkdir -p /kaniko/.docker
+    - cat /kaniko/.docker/config.json
     # - aws ecr get-login-password --region us-east-1 
     # - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${ECR_REGISTRY}"
     # - cred={\"credsStore\":\"ecr-login\",\"credHelpers\":{\"\":\"ecr-login\"}}
@@ -33,4 +37,4 @@ ecr_build:
       --destination "${ECR_IMAGE_REF}:${CI_COMMIT_BRANCH}"
       --insecure
   rules:
-    - when: never
+    - if: $CI_COMMIT_BRANCH
