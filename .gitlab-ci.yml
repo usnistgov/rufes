@@ -38,7 +38,7 @@ ecr_build:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker"
       --dockerfile "${CI_PROJECT_DIR}/tools/rufes-evaluation/docker/Dockerfile"
-      --destination "${ECR_IMAGE_REF}:${CI_COMMIT_BRANCH}"
+      --destination "$ECR_DEST"
       --insecure
   rules:
     - if: $CI_COMMIT_BRANCH
