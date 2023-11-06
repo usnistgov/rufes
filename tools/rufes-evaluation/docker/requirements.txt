@@ -2,3 +2,4 @@ munkres
 neleval
 scipy
 tqdm
+numpy<1.20
